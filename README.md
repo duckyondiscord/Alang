@@ -11,7 +11,7 @@ The name comes from Array-language, because ur writing the code in an Array.\
 Write your program like a csv, every keyword is seperated by a space.\
 When defining a functions/classes code, use tabs.
 # Running
-Usually, the file extension for Alang is .ag\
+The file extension for Alang is .ag\
 This helps ur system and the executor to find ur Alang program.\
 The syntax is simple. Just use the following command:
 `python3 main.py example.ag`
