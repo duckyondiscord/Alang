@@ -4,3 +4,6 @@
 - Static Variables
 - Easy usage
 - Fast runtime
+# Syntax
+Write your program like a csv, every keyword is seperated by a space.
+When defining a functions/classes code, use tabs.
