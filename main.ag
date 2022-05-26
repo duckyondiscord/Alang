@@ -1,0 +1,3 @@
+include io
+io println "hello world"
+io println "hello world2"
