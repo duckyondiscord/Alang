@@ -1,4 +1,5 @@
-from os import system
+from os import system as call
+from platform import system
 
 code = {
     "header": [],
@@ -24,6 +25,8 @@ def compilecpp(fname):
         file.write(source)
     
     # compile code
+    if system() == 'Linux':
+        call(f"g++ -o {fname[:len(fname) - 3]} {fname}.cpp")
 
 class commands:
     global code
