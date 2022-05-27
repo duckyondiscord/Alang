@@ -60,7 +60,7 @@ for Array in lineArrays:
             kw = ''
 
         elif char == '/':
-            kws.append([kw, True])
+            kws.append([kw, "str"])
             kw = ''
 
         else:
@@ -68,7 +68,7 @@ for Array in lineArrays:
     
     for kw in kws:
         if kw[1]:
-            outArray.append([kw[0], "var"])
+            outArray.append([kw[0], "str"])
         else:
             for xkw in kw[0].split(' '):
                 if xkw != '':
