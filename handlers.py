@@ -27,7 +27,7 @@ def compilecpp(fname):
     for line in code["main"]:
         source += '    ' + line + '\n'
     
-    source += "\n}"
+    source += "}"
 
     # save code
     with open(fname + '.cpp', 'w') as file:
@@ -65,30 +65,38 @@ class commands:
                 couts.append(i[0][1:])
 
         if self.array[1][0] == 'print':
-            code[cmethod].append(f'{"    " * self.tabs}cout << {" << ".join(couts)};')
+            code[cmethod].append(f'{"    " * self.tabs}std::cout << {" << ".join(couts)};')
         
         elif self.array[1][0] == 'println':
-            code[cmethod].append(f'{"    " * self.tabs}cout << {" << ".join(couts)} << endl;')
+            code[cmethod].append(f'{"    " * self.tabs}std::cout << {" << ".join(couts)} << std::endl;')
         else:
             config.errors.unknown_method.replace('%', 'io')
-        
+
+    def _return(self):
+        toreturn = self.array[1][0]
+        code[cmethod].append(f'{"    " * self.tabs}return {toreturn};')
+
     def func(self, block):
         global cmethod
         global code
 
-        funcname   = self.array[0][0]
-        returntype = self.array[1][0]
-        args       = self.array[2][0]
-        code["header"].append(f"{returntype} {funcname}({args}) {'{'}")
+        funcname   = self.array[1][0]
+        returntype = self.array[2][0]
+        args       = [" ".join(x[0].split('.')) for x in self.array[3:]]
+        print(args)
+
+        code["header"].append(f"{returntype} {funcname}({','.join(args)}) {'{'}")
         cmethod = "header"
 
         print('-----')
+        print(block)
+        
         for line in block:
             convert.commandhandler(line, block)
         print('-----')
         
         cmethod = "main"
-        code["header"].append("\n}\n")
+        code["header"].append("}\n")
 
     def var(self):
         global cmethod
@@ -98,21 +106,22 @@ class commands:
         varname    = self.array[1][0]
         varcontent = self.array[2][0]
 
+        # shit starts here
+
         if vartype == 'int':
             vartypec = 'int'
             print(varcontent)
             try:
                 int(varcontent)
-                data = varcontent
             except:
                 print(config.errors.bad_var_content.replace('%', 'int'))
                 exit()
         
         elif vartype == 'str':
-            vartypec = 'string'
+            vartypec = 'std::string'
             try:
                 str(varcontent)
-                data = varcontent
+                varcontent = '"' + varcontent + '"'
             except:
                 print(config.errors.bad_var_content.replace('%', 'str'))
                 exit()
@@ -121,7 +130,6 @@ class commands:
             vartypec = 'float'
             try:
                 float(varcontent)
-                data = varcontent
             except:
                 print(config.errors.bad_var_content.replace('%', 'flt'))
                 exit()
@@ -133,10 +141,11 @@ class commands:
             vartypec = f'std::list<{listtype}>'
             print(config.errors.bad_var_content.replace('%', 'flt'))
             data = '{' + ", ".join(array[1:]) + '}'
-
         else:
             print(config.errors.unrecognized_variable_type)
             exit()
+        
+        # shit ends here
 
         for x in code["variables"].keys():
             if (x[1] == varname) and (not x[0] == vartype):
@@ -156,7 +165,7 @@ class commands:
 
     def include(self):
         if self.array[1][0] == 'math':
-            code[cmethod].append("#include <cmath>\n")
+            code["header"].append("#include <cmath>\n")
         else:
             print(config.errors.unknown_lib.replace('%', self.array[1][0]))
             exit()
