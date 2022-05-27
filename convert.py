@@ -20,8 +20,11 @@ def commandhandler(line, source):
     if line[0][0] == "io":
         cmd.io()
 
+    if line[0][0] == "return":
+        cmd._return()
+
     if line[0][0] == "include":
-        cmd.include()
+        cmd.io()
     
     if line[0][0] == "func":
         # BEGIN TABHEIGHT IS ERASED
@@ -43,7 +46,6 @@ def commandhandler(line, source):
             block.append(aline)
         
             first = False
-
                 
         cmd.func(block)
 
