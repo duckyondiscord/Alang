@@ -17,5 +17,5 @@ The syntax is simple. Just use the following command:\
 `python3 main.py example.ag`
 # Running
 U will get an executable file as output.\
-On Linux, u cac just type ./THE-EXECUTABLE-NAME\
-On Windows, u can just type the executables name.
+On Linux, u cac just type ./THE-EXECUTABLE-NAME or give it execution rights and run it via click.\
+On Windows, u can just type the executables name in the command line or click on it.
