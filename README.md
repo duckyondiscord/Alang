@@ -10,8 +10,12 @@ The name comes from Array-language, because ur writing the code in an Array.\
 # Syntax
 Write your program like a csv, every keyword is seperated by a space.\
 When defining a functions/classes code, use tabs.
-# Running
+# Compiling
 The file extension for Alang is .ag\
 This helps the executor to find ur Alang program.\
 The syntax is simple. Just use the following command:
 `python3 main.py example.ag`
+# Running
+U will get an executable file as output.
+On Linux, u cac just type ./THE-EXECUTABLE-NAME
+On Windows, u can just type the executables name.
