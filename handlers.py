@@ -1,10 +1,12 @@
 from os import system as call
 from platform import system
 import config
+import convert
 
 code = {
     "header": [],
     "main": [],
+    "variables": {},
     "functions": {},
 }
 
@@ -15,6 +17,7 @@ def compilecpp(fname):
     source += "#include <string>" + '\n'
     source += "#include <list>" + '\n'
     source += "#include <iostream>" + '\n'
+    source += '\n'
 
     for line in code["header"]:
         source += line + '\n'
@@ -24,7 +27,7 @@ def compilecpp(fname):
     for line in code["main"]:
         source += '    ' + line + '\n'
     
-    source += "    return 0;\n}"
+    source += "\n}"
 
     # save code
     with open(fname + '.cpp', 'w') as file:
@@ -33,10 +36,10 @@ def compilecpp(fname):
     # compile code
     if system() == 'Linux':
         call(f"g++ -o {fname[:len(fname) - 3]} {fname}.cpp")
-        call(f'rm {fname}.cpp')
+        #call(f'rm {fname}.cpp')
     if system() == 'Windows':
         system(f"standalone.exe -o {fname[:len(fname) - 3]} {fname}.cpp")
-        call(f'del {fname}.cpp')
+        #call(f'del {fname}.cpp')
 
 cmethod = ''
 
@@ -49,6 +52,9 @@ class commands:
         self.array   = array
 
     def io(self):
+        global cmethod
+        global code
+
         couts = []
 
         for i in self.array[2:]:
@@ -56,28 +62,45 @@ class commands:
                 couts.append('"' + i[0] + '"')
 
             if (i[1] == 'kw') and (i[0][0] == '$'):
-                couts.append(i[0])
+                couts.append(i[0][1:])
 
         if self.array[1][0] == 'print':
-            code[cmethod].append(f'cout << {" << ".join(couts)};')
+            code[cmethod].append(f'{"    " * self.tabs}cout << {" << ".join(couts)};')
         
         elif self.array[1][0] == 'println':
-            code[cmethod].append(f'cout << {" << ".join(couts)} << endl;')
+            code[cmethod].append(f'{"    " * self.tabs}cout << {" << ".join(couts)} << endl;')
         else:
             config.errors.unknown_method.replace('%', 'io')
         
-    def func(self, block, returntype):
-        funcname = self.array[0][0]
-        # get func return type
-        return 
+    def func(self, block):
+        global cmethod
+        global code
+
+        funcname   = self.array[0][0]
+        returntype = self.array[1][0]
+        args       = self.array[2][0]
+        code["header"].append(f"{returntype} {funcname}({args}) {'{'}")
+        cmethod = "header"
+
+        print('-----')
+        for line in block:
+            convert.commandhandler(line, block)
+        print('-----')
+        
+        cmethod = "main"
+        code["header"].append("\n}\n")
 
     def var(self):
+        global cmethod
+        global code
+
         vartype    = self.array[0][0]
         varname    = self.array[1][0]
         varcontent = self.array[2][0]
 
         if vartype == 'int':
             vartypec = 'int'
+            print(varcontent)
             try:
                 int(varcontent)
                 data = varcontent
@@ -125,14 +148,15 @@ class commands:
         else:
             add = ''
         
-        code[cmethod].append(f'{add}{vartypec} {varname} = {varcontent};')
+        code["variables"][varname] = [vartype, varcontent]
+        code[cmethod].append(f'{"    " * self.tabs}{add}{vartypec} {varname} = {varcontent};')
 
     def math(self):
         pass
 
     def include(self):
-        if self.array[1][0] == 'io':
-            code[cmethod].append("#include <iostream>\n")
+        if self.array[1][0] == 'math':
+            code[cmethod].append("#include <cmath>\n")
         else:
             print(config.errors.unknown_lib.replace('%', self.array[1][0]))
             exit()
