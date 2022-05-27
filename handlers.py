@@ -14,9 +14,9 @@ def compilecpp(fname):
     # build code
     source = "// ALANG SOURCE CONVERTED TO C++\n// EVERY CHANGES WILL BE OVERWRITTEN!\n\n"
 
-    source += "#include <string>" + '\n'
-    source += "#include <list>" + '\n'
-    source += "#include <iostream>" + '\n'
+    for _import in config.imports.preimports:
+        source += f"#include <{_import}>\n"
+
     source += '\n'
 
     for line in code["header"]:
@@ -44,9 +44,6 @@ def compilecpp(fname):
 cmethod = ''
 
 class commands:
-    global code
-    global cmethod
-
     def __init__(self, tabs, array):
         self.tabs    = tabs
         self.array   = array
@@ -60,6 +57,13 @@ class commands:
         for i in self.array[2:]:
             if i[1] == 'str':
                 couts.append('"' + i[0] + '"')
+            
+            if (i[1] == 'kw'):
+                try:
+                    int(i[0])
+                    couts.append('"' + i[0] + '"')
+                except:
+                    pass
 
             if (i[1] == 'kw') and (i[0][0] == '$'):
                 couts.append(i[0][1:])
@@ -73,6 +77,9 @@ class commands:
             config.errors.unknown_method.replace('%', 'io')
 
     def _return(self):
+        global cmethod
+        global code
+
         toreturn = self.array[1][0]
         code[cmethod].append(f'{"    " * self.tabs}return {toreturn};')
 
@@ -82,18 +89,41 @@ class commands:
 
         funcname   = self.array[1][0]
         returntype = self.array[2][0]
-        args       = [" ".join(x[0].split('.')) for x in self.array[3:]]
+
+        args       = []
+
+        for x in self.array[3:]:
+            _set = x[0].split('.')
+
+            if _set[1] == 'int':
+                pass
+            
+            elif _set[1] == 'str':
+                _set[1] = 'std::string'
+            
+            elif _set[1] == 'flt':
+                _set[1] = 'float'
+            
+            # does that work? no? ask ducky.
+            
+            elif vartype == 'lst':
+                _set[1] = f'std::list<{listtype}>'
+            
+            else:
+                print(config.errors.unrecognized_variable_type)
+                exit()
+            
+            #shit ends here
+            _set.reverse()
+            args.append(" ".join(_set))
+        
         print(args)
 
-        code["header"].append(f"{returntype} {funcname}({','.join(args)}) {'{'}")
+        code["header"].append(f"{returntype} {funcname}({', '.join(args)}) {'{'}")
         cmethod = "header"
 
-        print('-----')
-        print(block)
-        
         for line in block:
             convert.commandhandler(line, block)
-        print('-----')
         
         cmethod = "main"
         code["header"].append("}\n")
@@ -106,11 +136,11 @@ class commands:
         varname    = self.array[1][0]
         varcontent = self.array[2][0]
 
-        # shit starts here
+        # shit starts here (make one function with checks)
 
         if vartype == 'int':
             vartypec = 'int'
-            print(varcontent)
+            
             try:
                 int(varcontent)
             except:
@@ -144,11 +174,12 @@ class commands:
         else:
             print(config.errors.unrecognized_variable_type)
             exit()
+
         
         # shit ends here
 
         for x in code["variables"].keys():
-            if (x[1] == varname) and (not x[0] == vartype):
+            if (code["variables"][x][1] == varname) and (not code["variables"][x][0] == vartype):
                 print(config.errors.var_asigned_with_other_type.relpace('%', vartype))
                 exit()
         
@@ -161,9 +192,15 @@ class commands:
         code[cmethod].append(f'{"    " * self.tabs}{add}{vartypec} {varname} = {varcontent};')
 
     def math(self):
+        global cmethod
+        global code
+
         pass
 
     def include(self):
+        global cmethod
+        global code
+
         if self.array[1][0] == 'math':
             code["header"].append("#include <cmath>\n")
         else:
