@@ -1,6 +1,8 @@
 import handlers
 import config
 
+VALID_VARIABLE_TYPES = ['int', 'str', 'flt', '']
+
 def commandhandler(line, source):
     skip = 0
     tabheight = line[0][0].count("TAB")
@@ -10,8 +12,6 @@ def commandhandler(line, source):
     line[0][0] = line[0][0].replace('TAB', '')
 
     cmd = handlers.commands(tabheight, line)
-
-    print(tabheight, line[0][0])
 
     if (line[0][0] == 'return') and (handlers.cmethod == 'main'):
         print(config.errors.return_out_of_function)
@@ -24,7 +24,7 @@ def commandhandler(line, source):
         cmd._return()
 
     if line[0][0] == "include":
-        cmd.io()
+        cmd.include()
     
     if line[0][0] == "func":
         # BEGIN TABHEIGHT IS ERASED
