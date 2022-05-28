@@ -1,49 +1,92 @@
 from sys import argv
 from colorama import Fore
 import convert
+from os import listdir
+from os.path import isfile
+import config
 
-with open(argv[1]) as file:
-    lineArrays = []
-    for line in file.readlines():
-        #print(line)
-        line = line.replace('    ', "TAB").replace('\n', '')
-        lineArray = ''
-        cKeywords = []
-        sequence = None
-        x = False
+print(f'''                                          
+       db         88                                        
+      d88b        88      [ release {config.version.main}.{config.version.sub} - {config.version.release} ]                        
+     d8'`8b       88                                        
+    d8'  `8b      88  ,adPPYYba,  8b,dPPYba,    ,adPPYb,d8  
+   d8YaaaaY8b     88  ""     `Y8  88P'   `"8a  a8"    `Y88  
+  d8""""""""8b    88  ,adPPPPP88  88       88  8b       88  
+ d8'        `8b   88  88,    ,88  88       88  "8a,   ,d88  
+d8'          `8b  88  `"8bbdP"Y8  88       88   `"YbbdP"Y8
+                                                aa,    ,88  
+                                                 "Y8bbdP" 
+''')
 
-        for char in line:
-            isseq = False
+fname = " ".join(argv[1:])
 
-            if char != sequence:
-                if (char == "'"):
-                    sequence = '"'
-                    isseq = True
+filecontent = None
 
-                if (char == '"'):
-                    sequence = "'"
-                    isseq = True
+try:
+    with open(fname, 'r') as file:
+        filecontent = file.readlines()
+except:
+    print(config.info.no_file_given)
+    try:
+        with open('main.ag', 'r') as file:
+            filecontent = file.readlines()
+        fname = 'main.ag'
+    except:
+        for i in listdir():
+            ext = i.split('.')
+            ext = ext[len(ext) - 1]
+            if (ext == 'ag') and isfile(i):
+                try:
+                    with open(i, 'r') as file:
+                        filecontent = file.readlines()
+                    fname = i
+                    break
+                except:
+                    pass
 
-            if isseq:
-                x = not x
-                if x == False:
-                    char = '/'
-                    cKeywords.append([char, 'start-of-string'])
-                    sore = True
-                
-                if x == True:
-                    char = '\\'
-                    cKeywords.append([char, 'end-of-string'])
-                    sore = False
-            
-            cKeywords.append([char, 'char'])
-            
-            lineArray += char
+if filecontent == None:
+    print(config.errors.script_not_found)
+    exit()
+else:
+    print(config.info.sucessfully_read_file.replace('%', fname))
 
-        lineArrays.append(lineArray + ';')
-        #print()
+lineArrays = []
+
+for line in filecontent:
+    line = line.replace('    ', "TAB").replace('\n', '')
+    lineArray = ''
+    cKeywords = []
+    sequence = None
+    x = False
+
+    for char in line:
+        isseq = False
+
+        if char != sequence:
+            if (char == "'"):
+                sequence = '"'
+                isseq = True
+
+            if (char == '"'):
+                sequence = "'"
+                isseq = True
+
+        if isseq:
+            x = not x
+            if x == False:
+                char = '/'
+
+            if x == True:
+                char = '\\'
+
+        lineArray += char
+
+    lineArrays.append(lineArray + ';')
 
 source = []
+
+if config.general.debug:
+    print('[DEBUG] Converted source 1/3 @ main')
 
 for Array in lineArrays:
     outArray = []
@@ -76,4 +119,7 @@ for Array in lineArrays:
 
     source.append(outArray)
 
-convert.main(source, argv[1])
+if config.general.debug:
+    print('[DEBUG] Converted source 2/3 @ main')
+
+convert.main(source, fname)
