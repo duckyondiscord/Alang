@@ -6,27 +6,27 @@
 - Fast runtime
 # What is Alang?
 Alang is a C Interpreter written in Python.\
-The name comes from Array-language, because ur writing the code in an Array.
+The name comes from Array-language, because you're writing the code in an Array.
 Write your program like a csv, every keyword is seperated by a space.\
 When defining a functions/classes code, use tabs.
 # Compiling
 The file extension for Alang is .ag\
-This helps the executor to find ur Alang program.\
+This helps the executor to find your Alang program.\
 The syntax is simple. Just use the following command:\
 `python3 main.py example.ag`
 # Running
-U will get an executable file as output.\
-On Linux, u cac just type ./THE-EXECUTABLE-NAME or give it execution rights and run it via click.\
-On Windows, u can just type the executables name in the command line or click on it.
+You will get an executable file as output.\
+On Linux, you can just type ./THE-EXECUTABLE-NAME after you gave it execution permissions(or run it in a GUI)\
+On Windows, you can just type the executables name in the command line or click on it.
 # Todo
 - Add auto return of None/0 when not defined
-- Syntax explantation
+- Syntax documentation
 - Add default cpp-snippets
-- Call function
-- Variable and function name conflicts with reserved keywords
-- Invalid character detection on defining Variable and function name
+- Calling functions
+- Variable and function names conflict with ones in the standard library
+- Invalid character detection on defining Variable and function names
 - Add rules to cpp-snippets
-- Explain cpp-snippets
-- Add where an variable was last defined `[method] / [cmethod]`
+- Document cpp-snippets
+- Add where a variable was last defined `[method] / [cmethod]`
 - Add cross system support
 - Add setup file (setup.sh/setup.bat)
