@@ -29,4 +29,4 @@ On Windows, u can just type the executables name in the command line or click on
 - Explain cpp-snippets
 - Add where an variable was last defined `[method] / [cmethod]`
 - Add cross system support
-- Add setup file (sh/bat)
+- Add setup file (setup.sh/setup.bat)
