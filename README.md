@@ -7,7 +7,6 @@
 # What is Alang?
 Alang is a C Interpreter written in Python.\
 The name comes from Array-language, because ur writing the code in an Array.
-# Syntax
 Write your program like a csv, every keyword is seperated by a space.\
 When defining a functions/classes code, use tabs.
 # Compiling
