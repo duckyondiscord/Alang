@@ -28,3 +28,5 @@ On Windows, u can just type the executables name in the command line or click on
 - Add rules to cpp-snippets
 - Explain cpp-snippets
 - Add where an variable was last defined `[method] / [cmethod]`
+- Add cross system support
+- Add setup file (sh/bat)
