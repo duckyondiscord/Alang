@@ -25,3 +25,4 @@ On Windows, u can just type the executables name in the command line or click on
 - Add default cpp-snippets
 - Call function
 - Variable and function name conflicts with reserved keywords
+- Invalid character detection on defining Variable and function name
