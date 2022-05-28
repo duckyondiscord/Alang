@@ -24,3 +24,4 @@ On Windows, u can just type the executables name in the command line or click on
 - Syntax explantation
 - Add default cpp-snippets
 - Call function
+- Variable and function name conflicts with reserved keywords
