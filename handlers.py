@@ -2,6 +2,10 @@ from os import system as call
 from platform import system
 import config
 import convert
+from os.path import isfile
+from os import listdir
+
+reserved_names = ['main', 'and', 'double', 'not_eq', 'throw', 'and_eq', 'dynamic_cast', 'operator', 'true', 'asm', 'else', 'or', 'try', 'auto', 'enum', 'or_eq', 'typedef', 'bitand', 'explicit', 'private', 'typeid', 'bitor', 'extern', 'protected', 'typename', 'bool', 'false', 'public', 'union', 'break', 'float', 'register', 'unsigned', 'case', 'for', 'reinterpret-cast', 'using', 'catch', 'friend', 'return', 'virtual', 'char', 'goto', 'short', 'void', 'class', 'if', 'signed', 'volatile', 'compl', 'inline', 'sizeof', 'wchar_t', 'const', 'int', 'static', 'while', 'const-cast', 'long', 'static_cast', 'xor', 'continue', 'mutable', 'struct', 'xor_eq', 'default', 'namespace', 'switch', 'delete', 'new', 'template', 'do', 'not', 'this']
 
 code = {
     "header": [],
@@ -14,13 +18,30 @@ def compilecpp(fname):
     # build code
     source = "// ALANG SOURCE CONVERTED TO C++\n// EVERY CHANGES WILL BE OVERWRITTEN!\n\n"
 
+    if config.general.debug:
+        print('[DEBUG] Building source 1/3 - Including imports @ handler')
+
     for _import in config.imports.preimports:
         source += f"#include <{_import}>\n"
-
+    
     source += '\n'
 
+    if config.general.debug:
+        print('[DEBUG] Building source 2/3 - Constructing header @ handler')
+
+    for snippet in listdir('cpp-snippets'):
+        # FILENAME WITHOUT CPP == FUNCTION NAME
+        if snippet[len(snippet) - 4:] == '.cpp':
+            with open(f'cpp-snippets/{snippet}', 'r') as file:
+                for line in file.readlines():
+                    source += line
+                source += '\n\n'
+    
     for line in code["header"]:
         source += line + '\n'
+
+    if config.general.debug:
+        print('[DEBUG] Building source 3/3 - Constructing main @ handler')
 
     source += "int main() {\n"
 
@@ -29,9 +50,16 @@ def compilecpp(fname):
     
     source += "}"
 
+    if config.general.debug:
+        print('[DEBUG] Done building the Source')
+        print('[DEBUG] Saving the build Source')
+
     # save code
     with open(fname + '.cpp', 'w') as file:
         file.write(source)
+    
+    if config.general.debug:
+        print('[DEBUG] Compiling the saved Source')
     
     # compile code
     if system() == 'Linux':
@@ -40,6 +68,11 @@ def compilecpp(fname):
     if system() == 'Windows':
         system(f"standalone.exe -o {fname[:len(fname) - 3]} {fname}.cpp")
         #call(f'del {fname}.cpp')
+    
+    if config.general.debug:
+        print('[DEBUG] EXECUTED WITHOUT ERRORS, QUITING...')
+    
+    exit()
 
 cmethod = ''
 
@@ -90,6 +123,10 @@ class commands:
         funcname   = self.array[1][0]
         returntype = self.array[2][0]
 
+        if funcname in reserved_names:
+            print(config.errors.reserved_name.replace('%', funcname))
+            exit()
+        
         args       = []
 
         for x in self.array[3:]:
@@ -114,10 +151,9 @@ class commands:
                 exit()
             
             #shit ends here
+
             _set.reverse()
             args.append(" ".join(_set))
-        
-        print(args)
 
         code["header"].append(f"{returntype} {funcname}({', '.join(args)}) {'{'}")
         cmethod = "header"
@@ -135,6 +171,10 @@ class commands:
         vartype    = self.array[0][0]
         varname    = self.array[1][0]
         varcontent = self.array[2][0]
+
+        if varname in reserved_names:
+            print(config.errors.reserved_name.replace('%', varname))
+            exit()
 
         # shit starts here (make one function with checks)
 
@@ -194,8 +234,6 @@ class commands:
     def math(self):
         global cmethod
         global code
-
-        pass
 
     def include(self):
         global cmethod
