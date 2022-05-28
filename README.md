@@ -27,3 +27,4 @@ On Windows, u can just type the executables name in the command line or click on
 - Invalid character detection on defining Variable and function name
 - Add rules to cpp-snippets
 - Explain cpp-snippets
+- Add where an variable was last defined `[method] / [cmethod]`
